@@ -1,7 +1,7 @@
 package org.example;
 
-import org.example.dao.impl.UserDaoImpl;
-import org.example.ioc.SpringBean;
+import org.example.srv.UserSrv;
+import org.example.srv.impl.UserSrvImpl;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,9 +25,11 @@ public class AppTest
     @Test
     public void test(){
         ApplicationContext ac = new ClassPathXmlApplicationContext("spring.xml");
-//        System.out.println(ac.getBean("SpringBean").equals(ac.getBean("SpringBean")));
-//        System.out.println("--- ok ---");
-//        System.out.println(ac.getBean(UserDaoImpl.class));
+
+        UserSrv userSrv = (UserSrv)ac.getBean("userSrvImpl");
+        userSrv.login("XXii","1234");
+
+        System.out.println();
 
         System.out.println("--- ---");
 
