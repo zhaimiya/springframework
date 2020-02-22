@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean class="org.example.User"></bean>
+
+    <bean id="bean1" class="org.example.Bean1" init-method="toString">
+        <property name="user" value="[xixi-boy]"></property>
+        <property name="tag" value="${tag}"></property>
+    </bean>
+
+    <bean class="org.example.MyBeanPostProcessor"></bean>
+
+    <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="customEditors">
+            <map>
+                <entry key="org.example.User" value="org.example.UserEditor"></entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:user.properties"></property>
+    </bean>
+</beans>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- -->
+
+    <!-- 配置目标类实现类 -->
+    <bean id="userSrvTarget" class="org.example.aop1.UserSrvImpl"></bean>
+    <!-- -->
+
+    <!-- 配置ADVICE -->
+    <bean id="logAdvice" class="org.example.aop1.LogAdvice"></bean>
+    <bean id="logoutAdvice" class="org.example.aop1.LogoutAdvice"></bean>
+    <bean id="timeAdvice" class="org.example.aop1.TimeAdvice"></bean>
+    <bean id="exceptionAdvice" class="org.example.aop1.ExceptionAdvice"></bean>
+
+    <!-- ADVISOR =  POINTCUT + ADVICE -->
+    <!-- 将ADVICE注入到POINTCUT位置，织入的过程 -->
+    <bean id="logAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+        <!-- 指定advice-->
+        <property name="advice" ref="logAdvice"></property>
+        <!-- 指定匹配的方法-->
+        <property name="mappedNames">
+            <list>
+                <value>login</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- ADVISOR =  POINTCUT + ADVICE -->
+    <!-- 将ADVICE注入到POINTCUT位置，织入的过程 -->
+    <bean id="logoutAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+        <!-- 指定advice-->
+        <property name="advice" ref="logoutAdvice"></property>
+        <!-- 指定匹配的方法-->
+        <property name="mappedNames">
+            <list>
+                <value>logout</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- ADVISOR =  POINTCUT + ADVICE -->
+    <!-- 将ADVICE注入到POINTCUT位置，织入的过程 -->
+    <bean id="timeAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+        <!-- 指定advice-->
+        <property name="advice" ref="timeAdvice"></property>
+        <!-- 指定匹配的方法-->
+        <property name="mappedNames">
+            <list>
+                <value>logout</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="exceptionAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+        <!-- 指定advice-->
+        <property name="advice" ref="exceptionAdvice"></property>
+        <!-- 指定匹配的方法-->
+        <property name="mappedNames">
+            <list>
+                <value>logout</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 配置代理 -->
+    <bean id="userSrv" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <!-- 目标类实例 -->
+        <property name="target" ref="userSrvTarget"></property>
+        <!-- 目标类接口列表 -->
+        <property name="interfaces">
+            <list>
+                <value>org.example.aop1.UserSrv</value>
+            </list>
+        </property>
+        <!-- 交叉业务逻辑 -->
+        <property name="interceptorNames">
+            <list>
+                <value>logAdvisor</value>
+                <value>logoutAdvisor</value>
+                <value>timeAdvisor</value>
+                <value>exceptionAdvisor</value>
+            </list>
+        </property>
+    </bean>
+
+
+</beans>

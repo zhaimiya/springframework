@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 配置目标类实例 -->
+    <bean id="userSrv" class="org.example.aop2.UserSrvImpl"></bean>
+    <bean id="animal" class="org.example.aop2.Animal"></bean>
+
+    <!-- 配置advice -->
+    <bean id="logAdvice" class="org.example.aop2.LogAdvice"></bean>
+
+
+    <!-- 配置pointcut并织入 -->
+    <aop:config>
+        <!-- 配置切入点 -->
+<!--        <aop:pointcut id="pc" expression="within(org.example.aop2.UserSrvImpl)"/>-->
+<!--        <aop:pointcut id="pc" expression="execution(String org.example.aop2.UserSrvImpl.hello())"/>-->
+        <!-- 第1个*：匹配所有返回值  -->
+        <!-- 第2个*：匹配aop1包下所有的类 -->
+        <!-- 第3个*：匹配类下的所有方法  -->
+        <!-- (..)： 参数任意  -->
+        <aop:pointcut id="pc" expression="execution(* org.example.aop1.*.*(..))"/>
+
+        <!-- 织入 -->
+        <aop:aspect ref="logAdvice">
+            <!-- 将LogAdvice中的log方法以前置通知的方式织入到UserSrvImpl-->
+            <aop:before method="preAdvice" pointcut-ref="pc"></aop:before>
+
+            <aop:after-returning method="postAdvice" pointcut-ref="pc" returning="val"></aop:after-returning>
+            <aop:after-throwing method="exceptionAdvice" pointcut-ref="pc" throwing="e"></aop:after-throwing>
+            <aop:around method="processAdvice" pointcut-ref="pc" ></aop:around>
+        </aop:aspect>
+    </aop:config>
+
+</beans>
