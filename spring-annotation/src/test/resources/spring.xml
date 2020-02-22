@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- 扫描包 -->
+    <context:component-scan base-package="org.example.ioc"></context:component-scan>
+    <context:component-scan base-package="org.example.srv.impl"></context:component-scan>
+    <context:component-scan base-package="org.example.dao.impl"></context:component-scan>
+
+    <!--  读取属性文件 -->
+    <context:property-placeholder location="classpath:user.properties"></context:property-placeholder>
+
+    <!-- 数据装配 -->
+    <util:list id="list">
+        <value>"1"</value>
+        <value>"2"</value>
+    </util:list>
+
+    <util:list id="array">
+        <value>1</value>
+        <value>1</value>
+        <value>2</value>
+    </util:list>
+
+    <util:map id="map">
+        <entry key="1" value="1"></entry>
+        <entry key="2" value="2"></entry>
+    </util:map>
+
+    <util:set id="set">
+        <value>2</value>
+        <value>2</value>
+        <value>3</value>
+    </util:set>
+    
+    <util:properties id="properties">
+        <prop key="key1">1</prop>
+    </util:properties>
+</beans>
