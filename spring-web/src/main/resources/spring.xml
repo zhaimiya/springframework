@@ -1,9 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
     <context:component-scan base-package="com.dao.impl"></context:component-scan>
     <context:component-scan base-package="com.srv.impl"></context:component-scan>
     <bean class="com.util.SpringBeanHolder"></bean>
+
+    <!--  读取属性文件 -->
+    <context:property-placeholder location="classpath:dataSource.properties"></context:property-placeholder>
+    <!--  使用Spring提供的DriverManagerDataSource，配置数据源，but效率低，无连接池 -->
+    <bean id="dataSource1" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"></property>
+        <property name="url" value="${jdbc.url}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+    </bean>
+
+
+    <!-- dbcp -->
+    <!-- 也可以使用其他数据 -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"></property>
+        <property name="url" value="${jdbc.url}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+        <property name="initialSize" value="10"></property>
+        <property name="maxActive" value="100"></property><!-- 最大连接 -->
+        <property name="maxIdle" value="20"></property><!-- 最少空闲 -->
+        <property name="minIdle" value="3"></property>
+        <property name="maxWait" value="5000"></property>
+    </bean>
+    <!--  配置JdbcTemplate  -->
+    <bean class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!--  方式一：基于命名空间  -->
+    <!--
+    事务属性：
+    1.传播属性propagation(用来定义某个方法是否需要事务)：
+       required:必须添加事务，若当前方法没有事务则创建一个新的事务，用于增删改
+       supports:可以没有事务，支持已经存在的事务，如果没有事务也可以运行，用于查询
+     2.隔离级别
+       事务在并发情况下可能会出现：
+       脏读：一个事务读取到另一个事务没有提交的数据
+             （mysql，oracle不会出现这种情况，默认是只能读取到已提交的数据）
+       不可重复读：一个事务已经读取数据，另一个事务在修改数据，
+              可能导致使用的数据与数据库数据不同步
+       幻读或虚读：一个事务已经读取数据，另外一个数据在添加或删除数据，
+               可能导致使用的数据量与数据库不同步
+      已提交读：避免脏读，会发生不可重复读和幻读
+      未提交读：会脏读和不可重复读或幻读
+      重复读：避免脏读和不可重复读，会发生幻读
+      可序列化：避免脏读和不可重复读，幻读
+     3.回滚条件 默认抛出运行时异常回滚
+     rollbackFor 发生该异常回滚
+     noRollbackFor 发生该异常不回滚
+     4.只读优化
+     在该事务中只能查询
+     5.超时操作
+       配置事务的超时时间，一般不配
+    -->
+
+<!--    &lt;!&ndash; 配置Advice&ndash;&gt;-->
+<!--    <tx:advice id="txAdvice" transaction-manager="transactionManager">-->
+<!--        &lt;!&ndash; 配置事务属性 &ndash;&gt;-->
+<!--        <tx:attributes>-->
+<!--            <tx:method name="login" propagation="SUPPORTS" read-only="true"/>-->
+<!--            <tx:method name="regist" propagation="REQUIRED" isolation="READ_COMMITTED"-->
+<!--                       rollback-for="java.lang.Exception"></tx:method>-->
+<!--        </tx:attributes>-->
+<!--    </tx:advice>-->
+
+<!--    &lt;!&ndash;  配置PointCut并织入 &ndash;&gt;-->
+<!--    <aop:config>-->
+<!--        <aop:pointcut id="pc" expression="execution(* com.dao.impl.*.*(..))"/>-->
+<!--        <aop:advisor advice-ref="txAdvice" pointcut-ref="pc"></aop:advisor>-->
+<!--    </aop:config>-->
+    <!--  方式二：  -->
+    <tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
+
+
 </beans>

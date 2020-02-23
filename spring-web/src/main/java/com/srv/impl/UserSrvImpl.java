@@ -14,6 +14,7 @@ public class UserSrvImpl implements UserSrv {
 
     @Override
     public User login(String username, String pwd) {
+        System.out.println("UserSrvImpl.login   username: "+username+" pwd： "+pwd);
         User user = userDao.queryByUserName(username);
         if (null != user) {
             if (user.getPwd().equals(pwd)) {
