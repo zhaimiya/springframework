@@ -11,6 +11,6 @@
     <title>1234</title>
 </head>
 <body>
-   <h2>${user.username}通关成功！</h2>
+   <h2>${user.name}通关成功！</h2>
 </body>
 </html>

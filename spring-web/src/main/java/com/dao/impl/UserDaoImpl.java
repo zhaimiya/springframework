@@ -28,4 +28,9 @@ public class UserDaoImpl implements UserDao {
         }
         return null;
     }
+
+    @Override
+    public void insert(User user) {
+
+    }
 }

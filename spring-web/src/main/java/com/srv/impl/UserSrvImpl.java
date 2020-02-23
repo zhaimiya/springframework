@@ -24,4 +24,9 @@ public class UserSrvImpl implements UserSrv {
 //        throw  new ExportException();
         return null;
     }
+
+    @Override
+    public void insert(User user) {
+        userDao.insert(user);
+    }
 }

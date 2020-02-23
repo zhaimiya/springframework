@@ -2,9 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
-    <context:component-scan base-package="com.dao.impl"></context:component-scan>
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!-- 动态创建dao实现类,则不需要扫dao实现类的包 -->
+<!--    <context:component-scan base-package="com.dao.impl"></context:component-scan>-->
     <context:component-scan base-package="com.srv.impl"></context:component-scan>
     <bean class="com.util.SpringBeanHolder"></bean>
 
@@ -35,6 +35,25 @@
     <!--  配置JdbcTemplate  -->
     <bean class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!-- 配置SqlSessionFactoryBean -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 配置mybatis的配置文件,一般直接在spring配置文件中配置-->
+        <!--        <property name="configLocation" value="classpath:mybatis-config.xml"></property>-->
+        <property name="dataSource" ref="dataSource"></property>
+        <!-- 指定映射文件路径 -->
+        <property name="mapperLocations" value="classpath:com/mapper/*Mapper.xml"></property>
+        <!--  为映射文件指定别名 -->
+        <property name="typeAliasesPackage" value="com.pojo"></property>
+    </bean>
+
+    <!-- 动态创建dao实现类 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 指定sqlSessionFactory -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+        <!-- 指定接口所在的包 -->
+        <property name="basePackage" value="com.dao"></property>
     </bean>
 
     <!-- 配置事务管理器 -->
@@ -69,22 +88,22 @@
        配置事务的超时时间，一般不配
     -->
 
-<!--    &lt;!&ndash; 配置Advice&ndash;&gt;-->
-<!--    <tx:advice id="txAdvice" transaction-manager="transactionManager">-->
-<!--        &lt;!&ndash; 配置事务属性 &ndash;&gt;-->
-<!--        <tx:attributes>-->
-<!--            <tx:method name="login" propagation="SUPPORTS" read-only="true"/>-->
-<!--            <tx:method name="regist" propagation="REQUIRED" isolation="READ_COMMITTED"-->
-<!--                       rollback-for="java.lang.Exception"></tx:method>-->
-<!--        </tx:attributes>-->
-<!--    </tx:advice>-->
+    <!--    &lt;!&ndash; 配置Advice&ndash;&gt;-->
+    <!--    <tx:advice id="txAdvice" transaction-manager="transactionManager">-->
+    <!--        &lt;!&ndash; 配置事务属性 &ndash;&gt;-->
+    <!--        <tx:attributes>-->
+    <!--            <tx:method name="login" propagation="SUPPORTS" read-only="true"/>-->
+    <!--            <tx:method name="regist" propagation="REQUIRED" isolation="READ_COMMITTED"-->
+    <!--                       rollback-for="java.lang.Exception"></tx:method>-->
+    <!--        </tx:attributes>-->
+    <!--    </tx:advice>-->
 
-<!--    &lt;!&ndash;  配置PointCut并织入 &ndash;&gt;-->
-<!--    <aop:config>-->
-<!--        <aop:pointcut id="pc" expression="execution(* com.dao.impl.*.*(..))"/>-->
-<!--        <aop:advisor advice-ref="txAdvice" pointcut-ref="pc"></aop:advisor>-->
-<!--    </aop:config>-->
-    <!--  方式二：  -->
+    <!--    &lt;!&ndash;  配置PointCut并织入 &ndash;&gt;-->
+    <!--    <aop:config>-->
+    <!--        <aop:pointcut id="pc" expression="execution(* com.dao.impl.*.*(..))"/>-->
+    <!--        <aop:advisor advice-ref="txAdvice" pointcut-ref="pc"></aop:advisor>-->
+    <!--    </aop:config>-->
+    <!--  方式二： 注解方式 -->
     <tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
 
 
