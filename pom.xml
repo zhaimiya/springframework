@@ -25,7 +25,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <junit.version>4.12</junit.version>
         <spring.version>4.3.17.RELEASE</spring.version>
-        <mysql-connector-java.version>8.0.19</mysql-connector-java.version>
+        <mysql-connector-java.version>8.0.28</mysql-connector-java.version>
         <cglib.version>3.3.0</cglib.version>
         <spring-aspects.version>4.3.17.RELEASE</spring-aspects.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
